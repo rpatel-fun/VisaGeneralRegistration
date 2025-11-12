@@ -7,6 +7,7 @@ const STORAGE_KEYS = {
   FAILED_LOGIN_ATTEMPTS: '@failed_login_attempts',
   LOCKOUT_TIMESTAMP: '@lockout_timestamp',
   USER_DATA: '@user_data',
+  SESSION_ACTIVE: '@session_active',
 };
 
 const LOCKOUT_DURATION = 15 * 60 * 1000; // 15 minutes in milliseconds
@@ -280,13 +281,51 @@ export class StorageService {
    * Check if session exists (user is logged in)
    */
   static async hasSession(): Promise<boolean> {
-    const credentials = await this.getCredentials();
-    const userData = await this.getUserData();
-    return credentials !== null && userData !== null;
+    try {
+      const sessionActive = await AsyncStorage.getItem(STORAGE_KEYS.SESSION_ACTIVE);
+      return sessionActive === 'true';
+    } catch (error) {
+      console.error('Error checking session:', error);
+      return false;
+    }
   }
 
   /**
-   * Clear all stored data (logout)
+   * Set session as active
+   */
+  static async setSessionActive(active: boolean): Promise<boolean> {
+    try {
+      if (active) {
+        await AsyncStorage.setItem(STORAGE_KEYS.SESSION_ACTIVE, 'true');
+      } else {
+        await AsyncStorage.removeItem(STORAGE_KEYS.SESSION_ACTIVE);
+      }
+      return true;
+    } catch (error) {
+      console.error('Error setting session:', error);
+      return false;
+    }
+  }
+
+  /**
+   * Clear session (logout) - keeps registered users' credentials and data
+   */
+  static async clearSession(): Promise<boolean> {
+    try {
+      // Only clear session flag, not credentials or user data
+      // This allows users to log back in after logout
+      await this.setSessionActive(false);
+      await this.clearPartialRegistration();
+      await this.resetFailedAttempts();
+      return true;
+    } catch (error) {
+      console.error('Error clearing session:', error);
+      return false;
+    }
+  }
+
+  /**
+   * Clear all stored data (including registered users) - use with caution
    */
   static async clearAll(): Promise<boolean> {
     try {
@@ -294,6 +333,7 @@ export class StorageService {
       await this.clearUserData();
       await this.clearPartialRegistration();
       await this.resetFailedAttempts();
+      await this.setSessionActive(false);
       return true;
     } catch (error) {
       console.error('Error clearing all data:', error);

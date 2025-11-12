@@ -7,7 +7,7 @@ import {Container} from '../components/Container';
 import {FormInput} from '../components/FormInput';
 import {Button} from '../components/Button';
 import {useAuth} from '../context/AuthContext';
-import {validateRegistrationForm, hasFormErrors} from '../utils/validation';
+import {hasFormErrors, validateRegistrationForm} from '../utils/validation';
 import {RegistrationFormData, FormErrors} from '../types';
 import {StorageService} from '../services/storage';
 
@@ -30,6 +30,8 @@ export const RegistrationScreen: React.FC = () => {
     setValue,
     formState: {errors},
   } = useForm<RegistrationFormData>({
+    mode: 'onTouched',
+    reValidateMode: 'onBlur',
     defaultValues: {
       email: '',
       password: '',
@@ -105,14 +107,16 @@ export const RegistrationScreen: React.FC = () => {
   };
 
   const isFormValid = !hasFormErrors(formErrors);
+  console.log(formErrors, isFormValid);
 
   return (
     <Container>
-      <View style={styles.header}>
-        <Text style={styles.title}>Account setup</Text>
-      </View>
+      <View style={styles.content}>
+        <View style={styles.header}>
+          <Text style={styles.title}>Account setup</Text>
+        </View>
 
-      <View style={styles.formContainer}>
+        <View style={styles.formContainer}>
         <Controller
           control={control}
           name="email"
@@ -293,20 +297,25 @@ export const RegistrationScreen: React.FC = () => {
         </View>
       </View>
 
-      <View style={styles.footer}>
-        <Button
-          title="SAVE & START"
-          onPress={handleSubmit(onSubmit)}
-          disabled={!isFormValid || isSubmitting}
-          loading={isSubmitting}
-          testID="registration-submit-button"
-        />
+        <View style={styles.footer}>
+          <Button
+            title="SAVE & START"
+            onPress={handleSubmit(onSubmit)}
+            disabled={!isFormValid || isSubmitting}
+            loading={isSubmitting}
+            testID="registration-submit-button"
+          />
+        </View>
       </View>
     </Container>
   );
 };
 
 const styles = StyleSheet.create({
+  content: {
+    flex: 1,
+    padding: 20,
+  },
   header: {
     marginBottom: 24,
   },
@@ -339,7 +348,8 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
   footer: {
-    marginTop: 'auto',
+    marginTop: 16,
+    paddingBottom: 20,
   },
 });
 

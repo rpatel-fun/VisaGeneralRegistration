@@ -115,6 +115,6 @@ export const validateLoginForm = (data: LoginFormData): FormErrors => {
  * Checks if form has any errors
  */
 export const hasFormErrors = (errors: FormErrors): boolean => {
-  return Object.keys(errors).length > 0;
+  return Object.values(errors).filter((error: string | undefined) => error !== undefined).length > 0;
 };
 

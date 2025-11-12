@@ -54,6 +54,9 @@ export class AuthService {
         };
       }
 
+      // Set session as active
+      await StorageService.setSessionActive(true);
+
       // Clear partial registration data
       await StorageService.clearPartialRegistration();
 
@@ -132,6 +135,9 @@ export class AuthService {
       // Credentials match, reset failed attempts
       await StorageService.resetFailedAttempts();
 
+      // Set session as active
+      await StorageService.setSessionActive(true);
+
       // Get user data
       const user = await StorageService.getUserData();
       if (!user) {
@@ -155,11 +161,13 @@ export class AuthService {
   }
 
   /**
-   * Logout user
+   * Logout user (keeps registered user data for future login)
    */
   static async logout(): Promise<boolean> {
     try {
-      return await StorageService.clearAll();
+      // Only clear session, not credentials or user data
+      // This allows the user to log back in later
+      return await StorageService.clearSession();
     } catch (error) {
       console.error('Logout error:', error);
       return false;

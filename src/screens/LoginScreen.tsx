@@ -30,6 +30,8 @@ export const LoginScreen: React.FC = () => {
     handleSubmit,
     formState: {errors},
   } = useForm<LoginFormData>({
+    mode: 'onTouched',
+    reValidateMode: 'onBlur',
     defaultValues: {
       email: '',
       password: '',
@@ -114,11 +116,12 @@ export const LoginScreen: React.FC = () => {
 
   return (
     <Container>
-      <View style={styles.header}>
-        <Text style={styles.title}>Sign In</Text>
-      </View>
+      <View style={styles.content}>
+        <View style={styles.header}>
+          <Text style={styles.title}>Sign In</Text>
+        </View>
 
-      <View style={styles.formContainer}>
+        <View style={styles.formContainer}>
         {isLockedOut && (
           <View style={styles.lockoutBanner} accessibilityRole="alert">
             <Text style={styles.lockoutText}>
@@ -180,24 +183,25 @@ export const LoginScreen: React.FC = () => {
         />
       </View>
 
-      <View style={styles.footer}>
-        <Button
-          title="Sign In"
-          onPress={handleSubmit(onSubmit)}
-          disabled={!isFormValid || isSubmitting || isLockedOut}
-          loading={isSubmitting}
-          testID="login-submit-button"
-        />
+        <View style={styles.footer}>
+          <Button
+            title="Sign In"
+            onPress={handleSubmit(onSubmit)}
+            disabled={!isFormValid || isSubmitting || isLockedOut}
+            loading={isSubmitting}
+            testID="login-submit-button"
+          />
 
-        <View style={styles.registerLink}>
-          <Text style={styles.registerText}>Don't have an account? </Text>
-          <Text
-            style={styles.registerLinkText}
-            onPress={() => navigation.navigate('Registration')}
-            accessibilityRole="link"
-            accessibilityLabel="Register here">
-            Register here
-          </Text>
+          <View style={styles.registerLink}>
+            <Text style={styles.registerText}>Don't have an account? </Text>
+            <Text
+              style={styles.registerLinkText}
+              onPress={() => navigation.navigate('Registration')}
+              accessibilityRole="link"
+              accessibilityLabel="Register here">
+              Register here
+            </Text>
+          </View>
         </View>
       </View>
     </Container>
@@ -205,6 +209,10 @@ export const LoginScreen: React.FC = () => {
 };
 
 const styles = StyleSheet.create({
+  content: {
+    flex: 1,
+    padding: 20,
+  },
   header: {
     marginBottom: 24,
   },
@@ -237,7 +245,8 @@ const styles = StyleSheet.create({
     fontWeight: '500',
   },
   footer: {
-    marginTop: 'auto',
+    marginTop: 16,
+    paddingBottom: 20,
   },
   registerLink: {
     flexDirection: 'row',
