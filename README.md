@@ -24,6 +24,14 @@ A React Native mobile application that replicates the "Account setup" experience
 - **AsyncStorage** (Partial form state persistence)
 - **Jest** (Testing framework)
 
+## Screenshots
+
+<img width="1280" height="2856" alt="registration" src="https://github.com/user-attachments/assets/409fc5ec-d48f-44c2-a9fd-eba58016ec91" />
+<img width="1280" height="2856" alt="login" src="https://github.com/user-attachments/assets/cc9814a0-a745-436d-b8b1-fcf3ada33093" />
+<img width="1280" height="2856" alt="home" src="https://github.com/user-attachments/assets/8d61f13b-0495-4193-978f-4420ba6843fb" />
+
+
+
 ## Prerequisites
 
 - Node.js >= 24
